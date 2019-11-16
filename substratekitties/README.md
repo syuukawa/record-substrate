@@ -1,68 +1,68 @@
-# substratekitties
+3个月的学习，超过一周的时间准备和录制，基于官网的例子https://substrate.dev/substrate-collectables-workshop/#/README
 
-A new SRML-based Substrate node, ready for hacking.
 
-# Building
+image.png
+超过40个视频，录制完成，这是一个尝试，也算是一次挑战吧。首先视频不是免费的，第一节课和第二节课是免费的试看，如果大家觉得还不错就购买吧，首先感谢购买的各位；
 
-Install Rust:
+免费的视频会在火星，喜马拉雅，Youtobe，Bilibili等等平台上传，收费的课程会上传的短书，上传之后会同步更新相关文章。
 
-```bash
-curl https://sh.rustup.rs -sSf | sh
-```
+如果大家在学习的过程中，对视频的内容有任何的疑问或者更好的建议，请提出来，我会去完善，感谢大家。
 
-Install required tools:
+Getting Started
 
-```bash
-./scripts/init.sh
-```
+第0课Substrate-HelloKitty导读.key
+第1节课Getting Started-001-安装.key
+第1节课Getting Started-002-运行自定义节点.key
+第1节课Getting Started-003-页面和节点交互.key
+第1节课Getting Started-004-常用命令.key
+第1节课Getting Started-005-最新版本创建项目-del.key
 
-Build the WebAssembly binary:
+Basic
 
-```bash
-./scripts/build.sh
-```
+第2节课Basic-001-创建moudle.key
+第2节课Basic-002-定义StorageValue.key
+第2节课Basic-003-存储StorageValue.key
+第2节课Basic-004-定义使用StorageMapping.key
+第2节课Basic-005-查看StorageMapping.key
+第2节课Basic-006-存储struct.key
+第2节课Basic-007-查看struct.key
+第2节课Basic-008-String in Substrate.key - 没有视频【只是简单的介绍】
 
-Build all native code:
+Kitties
 
-```bash
-cargo build
-```
+第3节课Kitties-001-生成随机数.key
+第3节课Kitties-002-创建一个事件Event.key
+第3节课Kitties-003-获取所有的Kitties.key
+第3节课Kitties-004-拥有多个Kitty.key
+第3节课Kitties-005-查看多个Kitty.key
+第3节课Kitties-006-重构代码.key
 
-# Run
+Interaction
 
-You can start a development chain with:
+第4节课interaction-001-价格设定.key
+第4节课interaction-002-转移Kitty.key
+第4节课interaction-003-购买Kitty.key
+第4节课interaction-004-繁殖Kitty.key
+第4节课interaction-005-链更新.key
+第4节课interaction-006-玩游戏-测试.key
 
-```bash
-cargo run -- --dev
-```
+Web-UI
 
-Detailed logs may be shown by running the node with the following environment variables set: `RUST_LOG=debug RUST_BACKTRACE=1 cargo run -- --dev`.
+第5节课Web-UI-001-创建UI.key
+第5节课Web-UI-002-探索.key
+第5节课Web-UI-003-创建Kitty.key
+第5节课Web-UI-004-展示Kitty.key
 
-If you want to see the multi-node consensus algorithm in action locally, then you can create a local testnet with two validator nodes for Alice and Bob, who are the initial authorities of the genesis chain that have been endowed with testnet units. Give each node a name and expose them so they are listed on the Polkadot [telemetry site](https://telemetry.polkadot.io/#/Local%20Testnet). You'll need two terminal windows open.
+Test
 
-We'll start Alice's substrate node first on default TCP port 30333 with her chain database stored locally at `/tmp/alice`. The bootnode ID of her node is `QmQZ8TjTqeDj3ciwr93EJ95hxfDsb9pEYDizUAbWpigtQN`, which is generated from the `--node-key` value that we specify below:
+第6节课Test-001-测试配置.key
+第6节课Test-002-编写测试.key
 
-```bash
-cargo run -- \
-  --base-path /tmp/alice \
-  --chain=local \
-  --alice \
-  --node-key 0000000000000000000000000000000000000000000000000000000000000001 \
-  --telemetry-url ws://telemetry.polkadot.io:1024 \
-  --validator
-```
+Extras
 
-In the second terminal, we'll start Bob's substrate node on a different TCP port of 30334, and with his chain database stored locally at `/tmp/bob`. We'll specify a value for the `--bootnodes` option that will connect his node to Alice's bootnode ID on TCP port 30333:
+第7节课Extras-Auction-001-介绍.key
+第7节课Extras-Auction-002-创建拍卖.key
+第7节课Extras-Auction-003-竞拍.key
+第7节课Extras-Auction-004-结束竞拍.key
 
-```bash
-cargo run -- \
-  --base-path /tmp/bob \
-  --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/QmQZ8TjTqeDj3ciwr93EJ95hxfDsb9pEYDizUAbWpigtQN \
-  --chain=local \
-  --bob \
-  --port 30334 \
-  --telemetry-url ws://telemetry.polkadot.io:1024 \
-  --validator
-```
-
-Additional CLI usage options are available and may be shown by running `cargo run -- --help`.
+如果大家在学习的过程中，对视频的内容有任何的疑问或者更好的建议，请提出来，我会去完善，感谢大家。
