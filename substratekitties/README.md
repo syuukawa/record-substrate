@@ -11,58 +11,87 @@ image.png
 Getting Started
 
 第0课Substrate-HelloKitty导读.key
+
 第1节课Getting Started-001-安装.key
+
 第1节课Getting Started-002-运行自定义节点.key
+
 第1节课Getting Started-003-页面和节点交互.key
+
 第1节课Getting Started-004-常用命令.key
+
 第1节课Getting Started-005-最新版本创建项目-del.key
 
 Basic
 
 第2节课Basic-001-创建moudle.key
+
 第2节课Basic-002-定义StorageValue.key
+
 第2节课Basic-003-存储StorageValue.key
+
 第2节课Basic-004-定义使用StorageMapping.key
+
 第2节课Basic-005-查看StorageMapping.key
+
 第2节课Basic-006-存储struct.key
+
 第2节课Basic-007-查看struct.key
+
 第2节课Basic-008-String in Substrate.key - 没有视频【只是简单的介绍】
 
 Kitties
 
 第3节课Kitties-001-生成随机数.key
+
 第3节课Kitties-002-创建一个事件Event.key
+
 第3节课Kitties-003-获取所有的Kitties.key
+
 第3节课Kitties-004-拥有多个Kitty.key
+
 第3节课Kitties-005-查看多个Kitty.key
+
 第3节课Kitties-006-重构代码.key
 
 Interaction
 
 第4节课interaction-001-价格设定.key
+
 第4节课interaction-002-转移Kitty.key
+
 第4节课interaction-003-购买Kitty.key
+
 第4节课interaction-004-繁殖Kitty.key
+
 第4节课interaction-005-链更新.key
+
 第4节课interaction-006-玩游戏-测试.key
 
 Web-UI
 
 第5节课Web-UI-001-创建UI.key
+
 第5节课Web-UI-002-探索.key
+
 第5节课Web-UI-003-创建Kitty.key
+
 第5节课Web-UI-004-展示Kitty.key
 
 Test
 
 第6节课Test-001-测试配置.key
+
 第6节课Test-002-编写测试.key
 
 Extras
 
 第7节课Extras-Auction-001-介绍.key
+
 第7节课Extras-Auction-002-创建拍卖.key
+
 第7节课Extras-Auction-003-竞拍.key
+
 第7节课Extras-Auction-004-结束竞拍.key
 
 如果大家在学习的过程中，对视频的内容有任何的疑问或者更好的建议，请提出来，我会去完善，感谢大家。
