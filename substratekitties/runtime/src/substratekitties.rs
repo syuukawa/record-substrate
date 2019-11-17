@@ -66,6 +66,7 @@ decl_storage! {
         KittyAuction get(auction_of): map T::Hash => Option<Auction<T::Hash, T::Balance, T::BlockNumber, T::AccountId>>;
         Auctions get(auctions_expire_at): map T::BlockNumber => Vec<(Auction<T::Hash, T::Balance, T::BlockNumber, T::AccountId>)>;
         AuctionPeriodLimit get(auction_period_limit) config(): T::BlockNumber = T::BlockNumber::sa(17280);
+        PredefinedAuctionPeriodLimit get(predefined_auction_period_limit) config(): T::BlockNumber = T::BlockNumber::sa(20);
         Bids get(bid_of): map (T::Hash, T::AccountId) => T::Balance;
         BidAccounts get(bid_accounts): map T::Hash => Vec<T::AccountId>;
 
@@ -204,6 +205,39 @@ decl_module! {
 
             ensure!(expiry > <system::Module<T>>::block_number(), "The expiry has to be greater than the current block number");
             ensure!(expiry <= <system::Module<T>>::block_number() + Self::auction_period_limit(), "The expiry has be lower than the limit block number");
+
+            let auctions = Self::auctions_expire_at(expiry);
+            ensure!(auctions.len() < MAX_AUCTIONS_PER_BLOCK, "Maximum number of auctions is reached for the target block, try another block");
+
+            let new_auction = Auction {
+                kitty_id,
+                kitty_owner: owner,
+                expiry,
+                min_bid,
+                high_bid: min_bid,
+                high_bidder: sender,
+            };
+
+            <KittyAuction<T>>::insert(kitty_id, &new_auction);
+            <Auctions<T>>::mutate(expiry, |auctions| auctions.push(new_auction.clone()));
+
+            Self::deposit_event(RawEvent::AuctionCreated(kitty_id, min_bid, expiry));
+
+            Ok (())
+        }
+
+        fn predefined_create_auction(origin, kitty_id: T::Hash, min_bid: T::Balance) -> Result {
+            let sender = ensure_signed(origin)?;
+
+            ensure!(<Kitties<T>>::exists(kitty_id), "This cat does not exist");
+
+            let owner = Self::owner_of(kitty_id).ok_or("No owner for this kitty")?;
+            ensure!(owner == sender, "You can't set an auction for a cat you don't own");
+
+            // ensure!(expiry > <system::Module<T>>::block_number(), "The expiry has to be greater than the current block number");
+            // ensure!(expiry <= <system::Module<T>>::block_number() + Self::auction_period_limit(), "The expiry has be lower than the limit block number");
+
+            let expiry = <system::Module<T>>::block_number() + Self::predefined_auction_period_limit();
 
             let auctions = Self::auctions_expire_at(expiry);
             ensure!(auctions.len() < MAX_AUCTIONS_PER_BLOCK, "Maximum number of auctions is reached for the target block, try another block");

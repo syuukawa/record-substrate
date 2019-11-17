@@ -21,6 +21,7 @@ import { Pretty } from './Pretty';
 
 //001-
 import { KittyCards } from './KittyCards'
+import { KittyCardsOwned } from './KittyCardsOwned'
 
 export class App extends ReactiveComponent {
 	constructor() {
@@ -68,9 +69,11 @@ export class App extends ReactiveComponent {
 			<Divider hidden />
 			<TransferSubstratekittiesSegment/>
 			<Divider hidden />
-			{/* <OwnerSubstratekittiesSegment/> */}
-			<Divider hidden />
 			<AuctionSubstratekittiesSegment/>
+			<Divider hidden />
+			<BidSubstratekittiesSegment/>
+			<Divider hidden />
+			<BreedSubstratekittiesSegment/>
 		</div>);
 	}
 }
@@ -179,30 +182,31 @@ class AddressBookSegment extends React.Component {
 			<div style={{ paddingBottom: '1em' }}>
 				<div style={{ fontSize: 'small' }}>lookup account</div>
 				<AccountIdBond bond={this.lookup} />
-				<If condition={this.lookup.ready()} then={<div>
-					<Label>Balance
-						<Label.Detail>
-							<Pretty value={runtime.balances.balance(this.lookup)} />
-						</Label.Detail>
-					</Label>
-					<Label>Nonce
-						<Label.Detail>
-							<Pretty value={runtime.system.accountNonce(this.lookup)} />
-						</Label.Detail>
-					</Label>
-					<If condition={runtime.indices.tryIndex(this.lookup, null).map(x => x !== null)} then={
-						<Label>Short-form
+				<If condition={this.lookup.ready()} then={
+					<div>
+						<Label>Balance
 							<Label.Detail>
-								<Rspan>{runtime.indices.tryIndex(this.lookup).map(i => ss58Encode(i) + ` (index ${i})`)}</Rspan>
+								<Pretty value={runtime.balances.balance(this.lookup)} />
 							</Label.Detail>
 						</Label>
-					} />
-					<Label>Address
-						<Label.Detail>
-							<Pretty value={this.lookup} />
-						</Label.Detail>
-					</Label>
-				</div>} />
+						<Label>Nonce
+							<Label.Detail>
+								<Pretty value={runtime.system.accountNonce(this.lookup)} />
+							</Label.Detail>
+						</Label>
+						<If condition={runtime.indices.tryIndex(this.lookup, null).map(x => x !== null)} then={
+							<Label>Short-form
+								<Label.Detail>
+									<Rspan>{runtime.indices.tryIndex(this.lookup).map(i => ss58Encode(i) + ` (index ${i})`)}</Rspan>
+								</Label.Detail>
+							</Label>
+						} />
+						<Label>Address
+							<Label.Detail>
+								<Pretty value={this.lookup} />
+							</Label.Detail>
+						</Label>
+					</div>} />
 			</div>
 			<div style={{ paddingBottom: '1em' }}>
 				<div style={{ fontSize: 'small' }}>name</div>
@@ -212,7 +216,8 @@ class AddressBookSegment extends React.Component {
 					validator={n => n ? addressBook().map(ss => ss.byName[n] ? null : n) : null}
 					action={<TransformBondButton
 						content='Add'
-						transform={(name, account) => { addressBook().submit(account, name); return true }}
+						transform={(name, account) => { 
+							addressBook().submit(account, name); return true }}
 						args={[this.nick, this.lookup]}
 						immediate
 					/>}
@@ -419,40 +424,54 @@ class SubstratekittiesSegment extends React.Component {
     }
 }
 
-// class OwnerSubstratekittiesSegment extends React.Component {
-//     constructor() {
-//         super()
+//转移Kitty
+class TransferSubstratekittiesSegment extends React.Component {
+	constructor() {
+		super()
 
-// 		this.skAccount = new Bond
-//     }
+		this.source = new Bond
+		this.kittyId = new Bond
+		this.destination = new Bond
+	}
+	render() {
+		return <Segment style={{ margin: '1em' }} padded>
+			<Header as='h2'>
+				<Icon name='send' />
+				<Header.Content>
+					transfer
+					<Header.Subheader>transfer kitty from your account to another</Header.Subheader>
+				</Header.Content>
+			</Header>
+			<div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>from</div>
+				<SignerBond bond={this.source} /> 
+			</div>
+			<div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>to</div>
+				<AccountIdBond bond={this.destination} />
+			</div>
+			<div style={{paddingBottom: '1em'}}>
+				<div style={{paddingBottom: '1em'}}>
+					<div style={{fontSize: 'small'}}>kittyId</div>
+					<InputBond bond={this.kittyId}/>
+				</div>
+			</div>		
+			<TransactButton
+				content="Send"
+				icon='send'
+				tx={{
+					sender: runtime.indices.tryIndex(this.source),
+					call: calls.substratekitties.transfer(this.destination, this.kittyId.map(hexToBytes)),
+					compact: false,
+					longevity: true
+				}}
+			/>
+		</Segment>
+	}
+}
 
-//     render() {
-//         return <Segment style={{ margin: '1em' }} padded>
-//             <Header as='h2'>
-//                 <Icon name='paw' />
-//                 <Header.Content>
-//                     Substrate Kitties
-//                 <Header.Subheader>There are <Pretty value={runtime.substratekitties.ownedKittiesCount} /> kitties purring.</Header.Subheader>
-//                 </Header.Content>
-//             </Header>
-//             <div style={{ paddingBottom: '1em' }}></div>
-			
-// 			{/* 004- */}
-//             <KittyCards count={runtime.substratekitties.ownedKittiesCount} />
-//             <div style={{ paddingBottom: '1em' }}></div>
-//             <SignerBond bond={this.skAccount} />
-//             <TransactButton
-//                 content="Create Kitty"
-//                 icon='paw'
-//                 tx={{
-//                     sender: runtime.indices.tryIndex(this.skAccount),
-//                     call: calls.substratekitties.createKitty()
-//                 }}
-//             />
-//         </Segment>
-//     }
-// }
 
+//设定Kitty的价格，售卖Kitty
 class SetPriceSubstratekittiesSegment extends React.Component {
 	constructor() {
 		super()
@@ -498,6 +517,7 @@ class SetPriceSubstratekittiesSegment extends React.Component {
 	}
 }
 
+//购买Kitty
 class BuySubstratekittiesSegment extends React.Component {
 	constructor() {
 		super()
@@ -543,52 +563,6 @@ class BuySubstratekittiesSegment extends React.Component {
 	}
 }
 
-
-class TransferSubstratekittiesSegment extends React.Component {
-	constructor() {
-		super()
-
-		this.source = new Bond
-		this.kittyId = new Bond
-		this.destination = new Bond
-	}
-	render() {
-		return <Segment style={{ margin: '1em' }} padded>
-			<Header as='h2'>
-				<Icon name='send' />
-				<Header.Content>
-					transfer
-					<Header.Subheader>transfer kitty from your account to another</Header.Subheader>
-				</Header.Content>
-			</Header>
-			<div style={{ paddingBottom: '1em' }}>
-				<div style={{ fontSize: 'small' }}>from</div>
-				<SignerBond bond={this.source} />
-			</div>
-			<div style={{ paddingBottom: '1em' }}>
-				<div style={{ fontSize: 'small' }}>to</div>
-				<AccountIdBond bond={this.destination} />
-			</div>
-			<div style={{paddingBottom: '1em'}}>
-				<div style={{paddingBottom: '1em'}}>
-					<div style={{fontSize: 'small'}}>kittyId</div>
-					<InputBond bond={this.kittyId}/>
-				</div>
-			</div>		
-			<TransactButton
-				content="Send"
-				icon='send'
-				tx={{
-					sender: runtime.indices.tryIndex(this.source),
-					call: calls.substratekitties.transfer(this.destination, this.kittyId.map(hexToBytes)),
-					compact: false,
-					longevity: true
-				}}
-			/>
-		</Segment>
-	}
-}
-
 class AuctionSubstratekittiesSegment extends React.Component {
 	constructor() {
 		super()
@@ -596,7 +570,7 @@ class AuctionSubstratekittiesSegment extends React.Component {
 		this.owner = new Bond
 		this.minBid = new Bond
 		this.kittyId = new Bond
-		this.expriy = new Bond
+		// this.expriy = new Bond
 	}
 	render() {
 		return <Segment style={{ margin: '1em' }} padded>
@@ -621,16 +595,118 @@ class AuctionSubstratekittiesSegment extends React.Component {
 				<div style={{ fontSize: 'small' }}>minBid</div>
 				<BalanceBond bond={this.minBid} />
 			</div>
-			<div style={{ paddingBottom: '1em' }}>
+			{/* <div style={{ paddingBottom: '1em' }}>
 				<div style={{ fontSize: 'small' }}>expriy</div>
 				<InputBond bond={this.expriy} />
-			</div>
+			</div> */}
 			<TransactButton
 				content="Send"
 				icon='send'
 				tx={{
 					sender: runtime.indices.tryIndex(this.owner),
-					call: calls.substratekitties.createAuction(this.kittyId.map(hexToBytes), this.minBid, 20),
+					call: calls.substratekitties.predefinedCreateAuction(this.kittyId.map(hexToBytes), this.minBid),
+					compact: false,
+					longevity: true
+				}}
+			/>
+		</Segment>
+	}
+}
+
+class BidSubstratekittiesSegment extends React.Component {
+	constructor() {
+		super()
+
+		this.bidner = new Bond
+		this.bidBalance = new Bond
+		this.kittyId = new Bond
+		// this.expriy = new Bond
+	}
+	render() {
+		return <Segment style={{ margin: '1em' }} padded>
+			<Header as='h2'>
+				<Icon name='send' />
+				<Header.Content>
+					Biding
+					<Header.Subheader>Biding for the Kitty</Header.Subheader>
+				</Header.Content>
+			</Header>
+			<div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>bidner</div>
+				<SignerBond bond={this.bidner} />
+			</div>
+			<div style={{paddingBottom: '1em'}}>
+				<div style={{paddingBottom: '1em'}}>
+					<div style={{fontSize: 'small'}}>kittyId</div>
+					<InputBond bond={this.kittyId}/>
+				</div>
+			</div>
+			<div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>bidBalance</div>
+				<BalanceBond bond={this.bidBalance} />
+			</div>
+			{/* <div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>expriy</div>
+				<InputBond bond={this.expriy} />
+			</div> */}
+			<TransactButton
+				content="Send"
+				icon='send'
+				tx={{
+					sender: runtime.indices.tryIndex(this.bidner),
+					call: calls.substratekitties.bidAuction(this.kittyId.map(hexToBytes), this.bidBalance),
+					compact: false,
+					longevity: true
+				}}
+			/>
+		</Segment>
+	}
+}
+
+class BreedSubstratekittiesSegment extends React.Component {
+	constructor() {
+		super()
+
+		this.owner = new Bond
+		this.kittyId1 = new Bond
+		this.kittyId2 = new Bond
+		// this.expriy = new Bond
+	}
+	render() {
+		return <Segment style={{ margin: '1em' }} padded>
+			<Header as='h2'>
+				<Icon name='send' />
+				<Header.Content>
+					Breed
+					<Header.Subheader>Breed Kitty</Header.Subheader>
+				</Header.Content>
+			</Header>
+			<div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>owner</div>
+				<SignerBond bond={this.owner} />
+			</div>
+			<div style={{paddingBottom: '1em'}}>
+				<div style={{paddingBottom: '1em'}}>
+					<div style={{fontSize: 'small'}}>kittyId1</div>
+					<InputBond bond={this.kittyId1}/>
+				</div>
+			</div>
+			<div style={{paddingBottom: '1em'}}>
+				<div style={{paddingBottom: '1em'}}>
+					<div style={{fontSize: 'small'}}>kittyId2</div>
+					<InputBond bond={this.kittyId2}/>
+				</div>
+			</div>
+			{/* <div style={{ paddingBottom: '1em' }}>
+				<div style={{ fontSize: 'small' }}>expriy</div>
+				<InputBond bond={this.expriy} />
+			</div> */}
+			<TransactButton
+				content="Send"
+				icon='send'
+				tx={{
+					sender: runtime.indices.tryIndex(this.owner),
+					call: calls.substratekitties.breedKitty(this.kittyId1.map(hexToBytes), this.kittyId2.map(hexToBytes)),
 					compact: false,
 					longevity: true
 				}}
