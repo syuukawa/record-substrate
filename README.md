@@ -79,6 +79,13 @@ Web-UI
 
 第5节课Web-UI-004-展示Kitty.key
 
+第5节课Web-UI-005-转移Kitty
+
+第5节课Web-UI-006-售卖Kitty
+
+第5节课Web-UI-007-繁殖Kitty
+
+
 Test
 
 第6节课Test-001-测试配置.key
@@ -94,5 +101,9 @@ Extras
 第7节课Extras-Auction-003-竞拍.key
 
 第7节课Extras-Auction-004-结束竞拍.key
+
+第7节课Web-UI-001-操作测试
+
+第8节课-后续
 
 如果大家在学习的过程中，对视频的内容有任何的疑问或者更好的建议，请提出来，我会去完善，感谢大家。
